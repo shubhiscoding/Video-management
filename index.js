@@ -10,10 +10,10 @@ app.use(express.json());
 
 // Import routes
 const authRouter = require("./routes/auth");
-const messagesRouter = require("./routes/messages");
+const uploadVideo = require("./routes/videos");
 
 // Setup all the routes
-app.use("/messages", messagesRouter);
+app.use("/upload", uploadVideo);
 app.use("/auth", authRouter);
 
 // Start the server

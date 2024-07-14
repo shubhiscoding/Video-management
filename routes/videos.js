@@ -1,17 +1,11 @@
 const express = require("express");
 const auth = require("../middleware/auth");
 const { admin } = require("../middleware/roles");
-
-// Dummy data
-let messages = [{ id: 1, name: "Lorem ipsum dolor", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras pretium nec ipsum nec elementum." }];
+const { uploadVideo } = require("../controllers/videoController");
 
 const router = express.Router();
 
-router.get("/", [auth, admin], (req, res) => {
-    res.send({
-        result: messages
-    });
-});
+router.post("/", [auth, admin], uploadVideo);
 
 // Export the router
 module.exports = router;

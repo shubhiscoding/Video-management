@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-
+require('dotenv').config();
 exports.seed = async function(knex) {
   const hashedPassword = await bcrypt.hash(process.env.PASSWORD, 10);
   return knex('admin').del()
