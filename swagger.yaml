@@ -23,7 +23,7 @@ paths:
   /auth:
     post:
       summary: Authenticate admin
-      description: Generate a JWT token for authentication. To test this use Admin email shubh@test.com and password = password only.
+      description: Generate a JWT token for authentication. To test this use Admin email "shubh@test.com" and password = "password" only.
       parameters:
         - in: body
           name: credentials

@@ -11,3 +11,6 @@
 # To run test
 
 ```npx jest```
+
+# Swagger Doc
+```https://github.com/shubhiscoding/Video-management/blob/main/swagger.yaml```
