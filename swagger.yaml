@@ -1,0 +1,332 @@
+swagger: '2.0'
+info:
+  version: "1.0.0"
+  title: Video Management API
+  description: API for uploading, trimming, merging videos, and generating shareable links.
+host: localhost:3000
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: x-auth-token
+    in: header
+    description: JWT token for authentication.
+
+paths:
+  /auth:
+    post:
+      summary: Authenticate admin
+      description: Generate a JWT token for authentication. To test this use Admin email shubh@test.com and password = password only.
+      parameters:
+        - in: body
+          name: credentials
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                description: The admin's email.
+              password:
+                type: string
+                description: The admin's password.
+      responses:
+        200:
+          description: Token generated successfully
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: JWT token.
+        400:
+          description: Invalid email or password
+          schema:
+            type: string
+        500:
+          description: Internal server error
+          schema:
+            type: string
+
+  /videos/upload:
+    post:
+      summary: Upload a video
+      description: Upload a video file with a maximum size of 25MB.
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: video
+          type: file
+          required: true
+          description: The video file to upload.
+        - in: header
+          name: x-auth-token
+          type: string
+          required: true
+          description: Authentication token.
+      responses:
+        200:
+          description: File uploaded successfully
+          schema:
+            type: object
+            properties:
+              result:
+                type: string
+              video:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  filename:
+                    type: string
+                  path:
+                    type: string
+        400:
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /videos/trim/{id}:
+    post:
+      summary: Trim a video
+      description: Trim a video based on start and end times.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          description: The ID of the video to trim.
+        - in: body
+          name: trim
+          required: true
+          schema:
+            type: object
+            properties:
+              start:
+                type: number
+              end:
+                type: number
+        - in: header
+          name: x-auth-token
+          type: string
+          required: true
+          description: Authentication token.
+      responses:
+        200:
+          description: Video trimmed successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              path:
+                type: string
+              video_details:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  filename:
+                    type: string
+                  path:
+                    type: string
+        404:
+          description: Video not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+
+  /videos/merge:
+    post:
+      summary: Merge multiple videos
+      description: Merge two or more videos.
+      parameters:
+        - in: body
+          name: merge
+          required: true
+          schema:
+            type: object
+            properties:
+              videoIds:
+                type: array
+                items:
+                  type: integer
+        - in: header
+          name: x-auth-token
+          type: string
+          required: true
+          description: Authentication token.
+      responses:
+        200:
+          description: Videos merged successfully
+          schema:
+            type: object
+            properties:
+              result:
+                type: string
+              mergedVideoId:
+                type: string
+        400:
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        404:
+          description: Video not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /videos/share:
+    post:
+      summary: Generate a shareable link for a video
+      description: Generate a shareable link with an expiry time.
+      parameters:
+        - in: body
+          name: shareableLink
+          required: true
+          schema:
+            type: object
+            properties:
+              videoId:
+                type: integer
+              expiryHours:
+                type: integer
+      responses:
+        200:
+          description: Shareable link generated successfully
+          schema:
+            type: object
+            properties:
+              shareableLink:
+                type: string
+              expiryTime:
+                type: string
+        400:
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /videos/shared/{token}:
+    get:
+      summary: Serve shared video
+      description: Serve a video based on a shareable token.
+      parameters:
+        - in: path
+          name: token
+          required: true
+          type: string
+          description: The token for the shared video.
+      responses:
+        200:
+          description: Video served successfully
+          schema:
+            type: file
+        404:
+          description: Invalid or expired link
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        410:
+          description: Link has expired
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+definitions:
+  Video:
+    type: object
+    properties:
+      id:
+        type: string
+      filename:
+        type: string
+      path:
+        type: string
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+  Trim:
+    type: object
+    properties:
+      start:
+        type: number
+      end:
+        type: number
+  Merge:
+    type: object
+    properties:
+      videoIds:
+        type: array
+        items:
+          type: string
+  ShareableLink:
+    type: object
+    properties:
+      videoId:
+        type: string
+      expiryHours:
+        type: integer
+  ShareableLinkResponse:
+    type: object
+    properties:
+      shareableLink:
+        type: string
+      expiryTime:
+        type: string
