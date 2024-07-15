@@ -3,3 +3,8 @@ node_modules/
 venv/
 data.sqlite3
 videos
+migrations/20240715100550_clear_token_table_make_id_notnull.js
+migrations/20240715093451_drop_token_tabel.js
+migrations/20240715091115_create_token_table.js
+migrations/20240715090951_drop_token_table.js
+migrations/20240715082612_create_token_table.js

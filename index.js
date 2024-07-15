@@ -13,7 +13,7 @@ const authRouter = require("./routes/auth");
 const uploadVideo = require("./routes/videos");
 
 // Setup all the routes
-app.use("/upload", uploadVideo);
+app.use("/videos", uploadVideo);
 app.use("/auth", authRouter);
 
 // Start the server
