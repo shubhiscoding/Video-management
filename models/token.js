@@ -15,7 +15,12 @@ const saveToken = async (req) => {
 };
 
 const getTokenById = async (tokenId) => {
-    return knex('tokens').where({ Tokenid: tokenId }).first();
+    try{
+        return knex('tokens').where({ Tokenid: tokenId }).first();
+    }catch(error){
+        console.error('Error getting token:', error);
+        res.status(404).json({ error: 'Token Not FOund' });
+    }
 }
 
 const deleteToken = async (Tokenid) => {

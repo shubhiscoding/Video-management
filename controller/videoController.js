@@ -70,6 +70,11 @@ exports.uploadVideo = async (req, res) => {
         error: err.message,
       });
     }
+      if (!req.file) {
+        return res.status(400).send({
+          error: 'No video file uploaded',
+        });
+      }
 
     try {
       // Save the video to the database
@@ -226,7 +231,10 @@ exports.generateShareableLink = async (req, res) => {
       videoId: videoId.toString(), // Ensure videoId is a string
       expiryTime: expiryTime
     };
-    
+    const video = await getVideoById(videoId);
+    if(!video){
+      return res.status(404).json({ error: 'Video not found' });
+    }
     await saveToken(Urltoken);
 
     // Generate the shareable link
