@@ -7,3 +7,7 @@
 - ```npx knex seed:run```
 
 - ```nodemon index.js```
+
+# To run test
+
+```npx jest```
